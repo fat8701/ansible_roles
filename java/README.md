@@ -32,8 +32,8 @@ python `2.7.5`
 	   - { role: java, java_version: "1.8" }
 
 ## 修改jdk版本步骤
-1- 复制jdk.tar.gz到files
-2- playbook中修改变量
+复制jdk.tar.gz到files
+playbook中修改变量
    - hosts: node1
      roles:
      - { role: java, java_version: "1.8", java_home: "/usr/java/jdk1.8.0_1??", java_file: "jdk-8u1??-linux-x64.tar.gz", java_install_path: "{{ software_install_path }}/jdk1.8.0_1??"}
