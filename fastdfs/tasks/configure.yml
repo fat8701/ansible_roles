@@ -1,0 +1,39 @@
+---
+# author: fat
+
+- name: configure | Setup nginx.conf.
+  template:
+    dest: "{{ nginx_conf_file_path }}"
+    src: nginx.conf.j2
+    mode: 0644
+    owner: "{{ nginx_user }}"
+    group: "{{ nginx_group }}"
+  notify: 
+  - Reload nginx.  
+  - Reload tracker.
+  - Reload storage.
+
+- name: configure | Setup nginx.sh file.
+  template:
+    dest: "/etc/rc.d/init.d/nginx"
+    mode: 0755
+    src: nginx.sh.j2
+
+#- name: configure | Add nginx services.
+#  shell: "chkconfig --add nginx "
+  
+- name: configure | Ensure nginx is running for centos6.
+  service: "name={{ item }} state=started enabled=yes"
+  when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "6"
+  with_items:
+    - "nginx"
+    - "fdfs_trackerd"
+    - "fdfs_storaged"
+
+- name: configure | Ensure nginx and fastdfs is running for centos7.
+  systemd: "name={{ item }} state=started enabled=yes"
+  when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "7"
+  with_items:
+    - "nginx"
+    - "fdfs_trackerd"
+    - "fdfs_storaged"

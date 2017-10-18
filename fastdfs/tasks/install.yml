@@ -1,0 +1,262 @@
+---
+# author: fat
+
+- name: install | Check if nginx local file is already configured.
+  stat: path={{ nginx_file_path }}
+  connection: local
+  register: nginx_file_result
+
+- name: install | Create software files.
+  file: path={{ software_files_path }} state=directory
+  connection: local
+  when: not nginx_file_result.stat.exists
+  
+- name: install | Download nginx file.
+  get_url: url={{ nginx_file_url }} dest={{ software_files_path }}
+  connection: local
+  when: not nginx_file_result.stat.exists
+
+- name: install | Ensure gcc packages are installed.
+  package:
+    name: "{{ item }}"
+    state: installed
+  with_items:
+    - gcc
+    - gcc-c++
+    - libtool
+    - make
+    - zlib
+    - zlib-devel
+    - openssl
+    - openssl-devel
+    - pcre
+    - pcre-devel
+    - unzip
+
+- name: install | Copy nginx file to agent.
+  unarchive:
+    src: "{{ nginx_file_path }}"
+    dest: "/tmp"
+    creates: "/tmp/nginx-{{ nginx_version }}"
+
+- name: install | Copy fastdfs file to agent.
+  unarchive:
+    src: "{{ fastdfs_file }}"
+    dest: "/tmp"
+    creates: "/tmp/fastdfs-{{ fastdfs_version }}"
+
+- name: install | Copy libfastcommon file to agent.
+  unarchive:
+    src: "{{ libfastcommon_file }}"
+    dest: "/tmp"
+    creates: "/tmp/libfastcommon-{{libfastcommon_version}}"
+
+- name: install | Copy module file to agent.
+  unarchive:
+    src: "{{ fastdfs_nginx_module_file }}"
+    dest: "/tmp"
+    creates: "/tmp/fastdfs-nginx-module"
+  connection: local
+
+- name: install libfastcommon | FastDFS
+  shell: sh make.sh && sh make.sh install
+  args:
+    chdir: "/tmp/{{ item }}/"
+  with_items:
+    - "libfastcommon-{{ libfastcommon_version }}"
+    - "fastdfs-{{ fastdfs_version }}"
+
+- name: install | Check if fastdfs log path is already configured.
+  stat: path={{ fastdfs_log_path }}
+  register: log_path_result
+
+- name: install | Create FastDFS Log path.
+  file: path={{ fastdfs_log_path }} state=directory
+  when: not log_path_result.stat.exists
+
+- name: install | Check if fastdfs data path is already configured.
+  stat: path={{ fastdfs_data_path }}
+  register: data_path_result
+
+- name: install | Create FastDFS data path.
+  file: path={{ fastdfs_data_path }} state=directory
+  when: not data_path_result.stat.exists
+
+#- name: copy conf file
+#  copy:
+#    src: /etc/fdfs/{{item}}.conf.sample
+#    dest: /etc/fdfs/{{item}}.conf
+#    owner: root
+#    group: root
+#    mode: 0644
+#  with_items:
+#    - "tracker"
+#    - "storage"
+
+- name: configure | Setup tracker.conf.
+  template:
+    dest: "{{ tracker_conf_file_path }}"
+    src: tracker.conf.j2
+    mode: 0644
+    owner: "{{ fastdfs_user }}"
+    group: "{{ fastdfs_group }}"
+
+- name: configure | Setup storage.conf.
+  template:
+    dest: "{{ storage_conf_file_path }}"
+    src: storage.conf.j2
+    mode: 0644
+    owner: "{{ fastdfs_user }}"
+    group: "{{ fastdfs_group }}"
+
+- name: add service
+  shell: chkconfig --add {{ item }}
+  with_items:
+    - "fdfs_trackerd"
+    - "fdfs_storaged"
+
+- name: modify service conf
+  replace:
+    path: "/etc/init.d/{{ item }}"
+    regexp: '/usr/local/bin'
+    replace: '/usr/bin'
+  with_items:
+    - "fdfs_trackerd"
+    - "fdfs_storaged"
+
+- name: Ensure trackerd is running for centos6.
+  service: "name=fdfs_trackerd state=started"
+  when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "6" 
+
+- name: Ensure trackerd is running for centos7.
+  systemd: "name=fdfs_trackerd state=started"
+  when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "7" 
+
+- name: Ensure storaged is running for centos6.
+  service: "name=fdfs_storaged state=started"
+  when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "6" 
+
+- name: Ensure storaged is running for centos7.
+  systemd: "name=fdfs_storaged state=started"
+  when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "7"
+
+#- name: Reload tracker.
+#  systemd: 
+#    name: fdfs_trackerd
+#    state: started
+
+#- name: Reload storage.
+#  systemd: 
+#    name: fdfs_storaged
+#    state: started
+
+#- name: modify tracker.conf 
+#  shell: sed -i 's#base_path=\(\/\(\w\+\)\)\+#base_path={{fastdfs_log_path}}#g' /etc/fdfs/tracker.conf 
+
+#- name: setup trackerd service
+#  service: 
+#    name: trackerd
+#    state: started
+#    pattern: /usr/bin/fdfs_trackerd
+#    args: /etc/fdfs/tracker.conf
+
+#- name: modify storage.conf 
+#  shell: |
+#     sed -i 's#base_path=\(/\(\w\+\)\)\+#base_path={{fastdfs_log_path}}#g' /etc/fdfs/storage.conf
+#     sed -i 's#store_path0=\(/\(\w\+\)\)\+#store_path0={{fastdfs_data_path}}#g' /etc/fdfs/storage.conf
+#     sed -i 's#tracker_server=[0-9]\+\(\.[0-9]\+\)\+:22122#tracker_server={{ansible_default_ipv4.address}}:{{tracker_port}}#g' /etc/fdfs/storage.conf
+
+#- name: setup storaged service
+#  service:
+#    name: storaged
+#    state: started
+#    pattern: /usr/bin/fdfs_storaged
+#    args: /etc/fdfs/storage.conf
+
+- name: modify fastdfs-nginx-module conf
+  replace:
+    path: "/tmp/fastdfs-nginx-module/src/config"
+    regexp: '/usr/local/include'
+    replace: '/usr/include'
+    backup: yes
+  connection: local
+
+- name: copy module to path
+  copy:
+    src: "/tmp/fastdfs-nginx-module"
+    dest: "{{ software_install_path }}"
+    owner: "{{ fastdfs_user }}"
+    group: "{{ fastdfs_group }}"
+    mode: 0655
+    #remote_src: true 不支持复制文件夹
+
+- name: install | Create nginx group.
+  group: name={{ nginx_group }}
+
+- name: install | Create nginx user.
+  user: name={{ nginx_user }} group={{ nginx_group }} shell=/sbin/nologin createhome=no
+
+- name: install | Create nginx work Directory.
+  file: path={{ item }} state=directory owner={{ nginx_user }} group={{ nginx_group }}
+  with_items:
+   - "{{ software_install_path }}/nginx-{{ nginx_version }}"
+   - "{{ nginx_temp_path }}/client"
+   - "{{ nginx_logpath }}"
+
+- name: install | Check if nginx bin file is already configured.
+  stat: path={{ software_install_path }}/nginx/sbin/nginx
+  register: nginx_bin_result
+
+- name: install | Build an install nginx.
+  shell: "{{ item }}" 
+  with_items:
+    - "{{ nginx_configure_command }}"
+    - make && make install
+  args:
+    chdir: "/tmp/nginx-{{ nginx_version }}/"
+  when: not nginx_bin_result.stat.exists
+  
+- name: install | Set the owner of the nginx directory.
+  file: path={{ software_install_path }}/nginx-{{ nginx_version }} state=directory owner={{ nginx_user }} group={{ nginx_group }} recurse=yes
+
+- name: install | Create nginx dir soft link.
+  file: src={{ software_install_path }}/nginx-{{ nginx_version }} dest={{ software_install_path }}/nginx owner={{ nginx_user }} group={{ nginx_group }} state=link
+  
+- name: install | Config environment variable.
+  lineinfile: dest=/etc/profile line='export PATH={{ software_install_path }}/nginx/sbin/:$PATH'
+
+- name: load /etc/profile
+  shell: source /etc/profile
+
+- name: copy mod_fastdfs.conf 
+  copy:
+   src: "/tmp/fastdfs-nginx-module/src/mod_fastdfs.conf"    
+   dest: "/etc/fdfs/mod_fastdfs.conf"
+   owner: "{{ fastdfs_user }}"
+   group: "{{ fastdfs_group }}"
+   mode: 0644
+
+- name: configure | Setup mod_fastdfs.conf.
+  template:
+    dest: "{{ mod_conf_file_path }}"
+    src: mod_fastdfs.conf.j2
+    mode: 0644
+    owner: "{{ fastdfs_user }}"
+    group: "{{ fastdfs_group }}"
+
+- name: chmod home
+  file:
+    path: /home
+    state: directory
+    recurse: yes
+    mode: 0777
+    owner: "{{ fastdfs_user }}"
+    group: "{{ fastdfs_group }}"
+  
+- name: create link
+  file:
+    src: /home/data/fastdfs/data  
+    dest: /home/data/fastdfs/data/M00
+    state: link
+    owner: "{{ fastdfs_user }}"
+    group: "{{ fastdfs_group }}"

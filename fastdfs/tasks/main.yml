@@ -1,0 +1,7 @@
+---
+# author: fat
+
+  - include: install.yml
+  - include: configure.yml 
+  - include: logrotate.yml
+  - include: fastdfs_test.yml

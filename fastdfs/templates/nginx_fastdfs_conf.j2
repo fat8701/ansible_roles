@@ -1,0 +1,25 @@
+  server {
+    listen 80; 
+    server_name {{ ansible_default_ipv4.address }};
+    access_log /var/log/access_nginx_fastdfs.log combined;
+    index index.html index.htm index.php;
+    location /nginx_status {
+        stub_status on; 
+        access_log off;
+        allow 127.0.0.1;
+        deny all;
+        }  
+    location ~/group1/M00 {
+          root /home/data/fastdfs/data;
+          ngx_fastdfs_module;
+        }
+    location / {        
+    if ($request_filename ~* ^.*?\.(txt|doc|pdf|rar|gz|zip|docx|exe|xlsx|ppt|pptx)$){
+      add_header Content-Disposition: 'attachment;';
+       }
+       }
+ 
+    }   
+ 
+
+

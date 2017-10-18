@@ -1,0 +1,49 @@
+---
+# author: fat
+- name: "configure | Wait {{ tracker_port }} port is opening."
+  wait_for: port={{ tracker_port }}
+
+- name: "configure | Wait {{ storage_port }} port is opening."
+  wait_for: port={{ storage_port }}
+
+- name: copy http.conf mime.types to path
+  copy:
+    src: "/tmp/fastdfs-{{ fastdfs_version }}/conf/{{ item }}"
+    dest: "/etc/fdfs/{{ item }}"
+    owner: "{{ fastdfs_user }}"
+    group: "{{ fastdfs_group }}"
+    mode: 0655
+    remote_src: true
+  with_items:
+    - "http.conf"
+    - "mime.types"
+
+- name: configure client conf file.
+  template:
+    dest: "{{ client_conf_file_path }}"
+    mode: 0644
+    src: client.conf.j2
+
+- name: Configtest nginx.
+  shell: /etc/rc.d/init.d/nginx configtest
+
+- name: start nginx.
+  shell: /etc/rc.d/init.d/nginx start
+
+- name: Reload nginx - after config check.
+  shell: /etc/rc.d/init.d/nginx reload
+
+- name: create | upload test.txt
+  shell: |
+      echo "helloworld"> /root/test.txt
+      /usr/bin/fdfs_test /etc/fdfs/client.conf upload /root/test.txt > /tmp/test.out
+
+- name: search url
+  shell: grep 'http*' /tmp/test.out|sed -n '2p' |awk '{print $4}'
+  register: url_test
+
+- name: test file url
+  uri:
+    url: "{{ url_test.stdout }}"
+  connection: local
+
