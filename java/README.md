@@ -31,9 +31,7 @@ python `2.7.5`
 	  roles:
 	   - { role: java, java_version: "1.8" }
 
-## 修改jdk版本步骤
-
-先复制jdk.tar.gz到files，然后playbook中修改变量
+## 修改jdk版本步骤（先复制jdk.tar.gz到files，然后playbook中修改变量）
 
    - hosts: node1
      roles:
