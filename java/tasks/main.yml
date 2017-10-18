@@ -20,18 +20,19 @@
 #  connection: local
 #  when: not java_file_result.stat.exists
 
-- name: Copy java file to agent
+- name: Copy jdk1.7 file to agent
   unarchive:
     #src: "{{ java_file_path }}"
-    src: jdk-7u80-linux-x64.tar.gz
+    src: "{{ java_file }}"
     dest: "{{ software_install_path }}"
     creates: "{{ java_install_path }}"
     owner: "{{ ansible_user_gecos }}"
   when: java_version == '1.7'
 
-- name: Copy java file to agent
+- name: Copy jdk1.8 file to agent
   unarchive:
-    src: jdk-8u144-linux-x64.tar.gz
+    #src: jdk-8u144-linux-x64.tar.gz
+    src: "{{ java_file }}"
     dest: "{{ software_install_path }}"
     creates: "{{ java_install_path }}"
     owner: "{{ ansible_user_gecos }}"
