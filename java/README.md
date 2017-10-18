@@ -1,6 +1,6 @@
 # Ansible Role: java
 
-添加jdk1.7版本
+安装JDK
 
 ## 要求
 
