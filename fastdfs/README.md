@@ -16,7 +16,8 @@ ansible主机
 
 ansible管理主机
 
-    os: `Centos 6.7 X64, Centos 7.2 X64`
+    os: `Centos 6.7 X64
+    Centos 7.2 X64`
     
 ## 依赖
 
