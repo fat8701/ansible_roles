@@ -31,8 +31,7 @@
 	  roles:
 	   - { role: java, java_version: "1.8" }
 
-## 修改jdk版本步骤
-	（先复制jdk.tar.gz到files，然后playbook中修改变量）
+## 修改jdk版本步骤（先复制jdk.tar.gz到files，然后playbook中修改变量）
 	
 	jdk 1.8版本
 	- hosts: node1
