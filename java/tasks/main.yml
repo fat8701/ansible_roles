@@ -14,15 +14,9 @@
   file: path={{ software_files_path }} state=directory
   connection: local
   when: not java_file_result.stat.exists
-  
-#- name: Download java file
-#  get_url: url={{ java_file_url }} dest={{ software_files_path }} validate_certs=no headers="Cookie:gpw_e24=http%3A%2F%2Fwww.oracle.com%2F;oraclelicense=accept-securebackup-cookie"
-#  connection: local
-#  when: not java_file_result.stat.exists
 
 - name: Copy jdk1.7 file to agent
   unarchive:
-    #src: "{{ java_file_path }}"
     src: "{{ java_file }}"
     dest: "{{ software_install_path }}"
     creates: "{{ java_install_path }}"
@@ -31,7 +25,6 @@
 
 - name: Copy jdk1.8 file to agent
   unarchive:
-    #src: jdk-8u144-linux-x64.tar.gz
     src: "{{ java_file }}"
     dest: "{{ software_install_path }}"
     creates: "{{ java_install_path }}"
