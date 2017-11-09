@@ -124,21 +124,20 @@
     - "fdfs_trackerd"
     - "fdfs_storaged"
 
-- name: Ensure trackerd is running for centos6.
-  service: "name=fdfs_trackerd state=started"
+- name: Ensure trackerd and storaged is running for centos6.
+  service: "name={{ item }} state=started "
   when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "6" 
+  with_items:
+    - "fdfs_trackerd"
+    - "fdfs_storaged"
 
-- name: Ensure trackerd is running for centos7.
-  systemd: "name=fdfs_trackerd state=started"
-  when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "7" 
-
-- name: Ensure storaged is running for centos6.
-  service: "name=fdfs_storaged state=started"
-  when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "6" 
-
-- name: Ensure storaged is running for centos7.
-  systemd: "name=fdfs_storaged state=started"
+- name: Ensure trackerd and storaged is running for centos7.
+  systemd: "name={{ item }} state=started "
   when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "7"
+  with_items:
+    - "fdfs_trackerd"
+    - "fdfs_storaged"
+
 
 #- name: Reload tracker.
 #  systemd: 

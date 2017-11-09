@@ -19,8 +19,8 @@
     mode: 0755
     src: nginx.sh.j2
 
-#- name: configure | Add nginx services.
-#  shell: "chkconfig --add nginx "
+- name: configure | Add nginx services.
+  shell: "chkconfig --add nginx "
   
 - name: configure | Ensure nginx is running for centos6.
   service: "name={{ item }} state=started enabled=yes"
