@@ -40,5 +40,5 @@
 		'192.168.100.127': 'slave-127.ambari.test'
 		'192.168.100.128': 'slave-128.ambari.test'
 	  roles:
-	  	- { role: ambari-pre , ambari_cluster_master: '192.168.100.126' }
+	    - { role: ambari-pre , ambari_cluster_master: '192.168.100.126' }
 
