@@ -7,10 +7,10 @@
 此角色仅在RHEL及其衍生产品上运行。
 
 ## 测试环境
-
-  ansible `2.3.2.0`
-  os `Centos 7.2 X64`
-  python `2.7.5`
+  
+	ansible `2.3.2.0`
+	os `Centos 7.2 X64`
+	python `2.7.5`
 
 ## 角色变量
 
