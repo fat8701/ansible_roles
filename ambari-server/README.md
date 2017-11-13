@@ -67,9 +67,7 @@
     - hosts: ambari-server (仅server节点)
 	  vars:
 	   - mysql_host: 192.168.100.126
-	   - mysql_user: root
-	   - mysql_password: 123456
-           - mysql57_basedir: '/usr/local/mysql-5.7.20'
+	   - mysql57_basedir: '/usr/local/mysql-5.7.20'
 	  roles: 
            - { role: ambari-server , ambari_cluster_master: '192.168.100.126' }
 
