@@ -1,0 +1,7 @@
+[HDP-UTILS-{{ HDP_UTILS_version }}]
+name=HDP Utils Version - HDP-UTILS-{{ HDP_UTILS_version }}
+baseurl=http://{{ ambari_cluster_master }}/{{ HDP_UTILS_path }}
+gpgcheck=1
+gpgkey=http://{{ ambari_cluster_master }}/{{ HDP_UTILS_path }}/RPM-GPG-KEY/RPM-GPG-KEY-Jenkins
+enabled=1
+priority=1

@@ -1,0 +1,60 @@
+---
+# author: fat
+- name: make password for ambari user
+  shell: python -c 'import crypt; print (crypt.crypt("{{ ambari_server_pass }}","{{ ambari_server_user }}"))'
+  register: ambari_user_crypt
+
+- name: add ambari server user
+  user: 
+    state: present
+    name: "{{ ambari_server_user }}"
+    password: "{{ ambari_user_crypt.stdout }}"
+    update_password: always
+
+- name: install httpd package
+  yum: name=httpd state=present
+
+- name: configure | Ensure httpd is running for centos7.
+  systemd: name=httpd state=started enabled=yes
+
+- name: install | Check if UTILS path is already configured.
+  stat: path={{ ambari_http_path }}/{{ HDP_UTILS_path }}
+  register: utils_path_result
+
+- name: install | Create UTILS unarchive path.
+  file: path={{ ambari_http_path }}/{{ HDP_UTILS_path }} state=directory
+  when: not utils_path_result.stat.exists
+
+- name: install | Check if Ambari RPM is already exist.
+  stat: path={{ ambari_http_path }}/HDP
+  register: rpm_path_result
+
+- name: Copy ambari rpm file to server.
+  unarchive: 
+     src: "{{ item.src }}" 
+     dest: "{{ item.dest }}"
+  with_items:
+   - { src: "{{ ambari_file }}", dest: "{{ ambari_http_path }}" }
+   - { src: "{{ HDP_file }}", dest: "{{ ambari_http_path }}" }
+   - { src: "{{ HDP_UTILS_file }}", dest: "{{ ambari_http_path }}/{{ HDP_UTILS_path }}" }
+  when: not rpm_path_result.stat.exists
+
+- name: Create ambari repo file.
+  template:
+    dest: "{{ item.dest }}"
+    src: "{{ item.src }}"
+    mode: 0644
+    owner: root
+    group: root
+  with_items:
+   - { dest: "{{ ambari_repo_path }}", src: "ambari.repo.j2" }
+   - { dest: "{{ HDP_repo_path }}", src: "HDP.repo.j2" }
+   - { dest: "{{ HDP_UTILS_repo_path }}", src: "HDP-UTILS.repo.j2" }
+
+- name: yum shell
+  shell: yum clean all && yum makecache 
+  ignore_errors: true
+
+- name: install ambari-server package
+  yum: name=ambari-server state=present
+   

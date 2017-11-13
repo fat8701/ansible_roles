@@ -1,0 +1,10 @@
+---
+# author: fat
+
+- include: install.yml
+- include: configure_db.yml
+- include: ambari_setup.yml
+
+
+- name: main | Ensure ambari-server is running and enabled on boot.
+  systemd: "name=ambari-server state=started enabled=yes"

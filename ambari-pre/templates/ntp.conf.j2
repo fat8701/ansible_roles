@@ -1,0 +1,27 @@
+{% if  "{{ ansible_default_ipv4.address }} == {{ ambari_cluster_master }}" %}
+driftfile /var/lib/ntp/drift
+restrict default nomodify
+restrict 127.0.0.1
+driftfile /etc/ntp/drift
+logfile /var/log/ntp.log
+
+server 127.127.1.1
+fudge 127.127.1.1 stratum 5
+server 1.cn.pool.ntp.org
+server 0.asia.pool.ntp.org
+server 2.asia.pool.ntp.org
+
+{% else %}
+
+driftfile /var/lib/ntp/drift
+restrict default nomodify
+restrict 127.0.0.1
+driftfile /etc/ntp/drift
+logfile /var/log/ntp.log
+
+server {{ ambari_cluster_master }}
+server 1.cn.pool.ntp.org
+server 0.asia.pool.ntp.org
+server 2.asia.pool.ntp.org
+
+{% endif %}

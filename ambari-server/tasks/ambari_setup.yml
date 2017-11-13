@@ -1,0 +1,16 @@
+---
+# author: fat
+
+- name : ambari-server setup jdbc
+  shell: "{{ setup_statement_jdbc }}"
+
+- name: configure ambari server user
+  lineinfile: 
+    backup: yes
+    dest: /etc/ambari-server/conf/ambari.properties
+    line: ambari-server.user = {{ ambari_server_user }}
+    state: present
+    regexp: '^ambari-server'
+
+- name: ambari-server setup database
+  shell: "{{ setup_statement_database }}"
