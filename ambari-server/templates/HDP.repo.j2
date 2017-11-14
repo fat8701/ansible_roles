@@ -1,8 +1,8 @@
 [HDP-{{ HDP_version }}]
 name=HDP Version - HDP-{{ HDP_version }}
-baseurl=http://{{ ambari_cluster_master }}/HDP/centos7/
+baseurl=http://{{ ansible_default_ipv4.address }}/HDP/centos7/
 gpgcheck=1
-gpgkey=http://{{ ambari_cluster_master }}/HDP/centos7/RPM-GPG-KEY/RPM-GPG-KEY-Jenkins
+gpgkey=http://{{ ansible_default_ipv4.address }}/HDP/centos7/RPM-GPG-KEY/RPM-GPG-KEY-Jenkins
 enabled=1
 priority=1
 

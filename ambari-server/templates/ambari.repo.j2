@@ -1,7 +1,7 @@
 [Updates-ambari-{{ ambari_version }}]
 name=ambari-{{ ambari_version }} - Updates
-baseurl=http://{{ ambari_cluster_master }}/ambari/centos7/
+baseurl=http://{{ ansible_default_ipv4.address }}/ambari/centos7/
 gpgcheck=1
-gpgkey=http://{{ ambari_cluster_master }}/ambari/centos7/RPM-GPG-KEY/RPM-GPG-KEY-Jenkins
+gpgkey=http://{{ ansible_default_ipv4.address }}/ambari/centos7/RPM-GPG-KEY/RPM-GPG-KEY-Jenkins
 enabled=1
 priority=1

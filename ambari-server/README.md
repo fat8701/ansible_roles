@@ -68,7 +68,7 @@
 
 	- hosts: ambari-server (仅server节点)
 	  roles: 
-           - { role: ambari-server , ambari_cluster_master: '192.168.100.126' }
+           - { role: ambari-server }
 
 ## 使用
 
@@ -82,6 +82,6 @@
 
 web 使用
 
-	http://ambari_cluster_master_ip:8080
+	http://ansible_default_ipv4.address_ip:8080
 	默认用户名/密码: admin/admin
 	然后跟着web页面一步一步的部署hadoop集群
