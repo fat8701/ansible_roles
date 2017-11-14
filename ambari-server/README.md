@@ -47,13 +47,15 @@
 	ambari_server_user: 'ambari'
 	ambari_server_pass: 'ambari'
 	ambari_server_database: 'mysql'
-	mysql57_port: "3306"
-	mysql57_user: "root"
-	mysql57_password: "123456"
+	mysql57_port: '3306'
+	mysql57_user: 'root'
+	mysql57_password: '123456'
+        mysql57_host: '192.168.100.126'
+        mysql57_basedir: '/usr/local/mysql-5.7.20'
 	java_home: '/usr/java/jdk1.8.0_144'
-	remote_jar_path: "/usr/share/java"
+	remote_jar_path: '/usr/share/java'
 	setup_statement_jdbc: 'ambari-server setup  --jdbc-driver={{ remote_jar_path }}/mysql-connector-java.jar --jdbc-db={{ ambari_server_database }} -v'
-	setup_statement_database: 'ambari-server setup -j {{ java_home }} --databasehost={{ mysql_host }} --databasename={{ ambari_db_name }} --databaseusername={{ ambari_db_user }} --databasepassword={{ ambari_db_pass }} --databaseport={{ mysql57_port }} --database={{ ambari_server_database }} -v -s'
+	setup_statement_database: 'ambari-server setup -j {{ java_home }} --databasehost={{ mysql57_host }} --databasename={{ ambari_db_name }} --databaseusername={{ ambari_db_user }} --databasepassword={{ ambari_db_pass }} --databaseport={{ mysql57_port }} --database={{ ambari_server_database }} -v -s'
 	ansible_python_interpreter: /usr/bin/python2.7
 
 ## 依赖
@@ -64,10 +66,7 @@
 
 ## Example Playbook
 
-    - hosts: ambari-server (仅server节点)
-	  vars:
-	   - mysql_host: 192.168.100.126
-	   - mysql57_basedir: '/usr/local/mysql-5.7.20'
+	- hosts: ambari-server (仅server节点)
 	  roles: 
            - { role: ambari-server , ambari_cluster_master: '192.168.100.126' }
 

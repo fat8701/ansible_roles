@@ -2,13 +2,13 @@
 # author: fat
 - block:
   - name: configure_db | Create ambari database.
-    shell: "{{ mysql57_basedir }}/bin/mysql -u{{ mysql_user }} -p{{ mysql_password }} -h{{ mysql_host }} -P{{ mysql_port | default('3306')}} -e \"create database {{ item }} DEFAULT CHARSET utf8\""
+    shell: "{{ mysql57_basedir }}/bin/mysql -u{{ mysql_user }} -p{{ mysql_password }} -h{{ mysql57_host }} -P{{ mysql_port | default('3306')}} -e \"create database {{ item }} DEFAULT CHARSET utf8\""
     with_items:
       - "{{ ambari_db_name }}"
       - "{{ hive_db_name }}"
 
   - name: configure_db | Ensure db role user exists.
-    shell: "{{ mysql57_basedir }}/bin/mysql -u{{ mysql_user}} -p{{ mysql_password }} -h{{ mysql_host }} -P{{ mysql_port | default('3306')}} -e \"{{ item }}\""
+    shell: "{{ mysql57_basedir }}/bin/mysql -u{{ mysql_user}} -p{{ mysql_password }} -h{{ mysql57_host }} -P{{ mysql_port | default('3306')}} -e \"{{ item }}\""
     with_items:
      - create user '{{ ambari_db_user }}'@'%' identified by '{{ ambari_db_pass }}'
      - grant all privileges on {{ ambari_db_name }}.* to '{{ ambari_db_user }}'@'%' identified by '{{ ambari_db_pass }}'
@@ -19,7 +19,7 @@
      - flush privileges;
 
   - name: configure | Ensure db ambari initialize.
-    shell: "{{ mysql57_basedir }}/bin/mysql -u{{ mysql_user}} -p{{ mysql_password }} -h{{ mysql_host }} -P{{ mysql_port | default('3306')}} -D {{ ambari_db_name }} -e \"{{ item }}\""
+    shell: "{{ mysql57_basedir }}/bin/mysql -u{{ mysql_user}} -p{{ mysql_password }} -h{{ mysql57_host }} -P{{ mysql_port | default('3306')}} -D {{ ambari_db_name }} -e \"{{ item }}\""
     with_items:
      - source /var/lib/ambari-server/resources/Ambari-DDL-MySQL-CREATE.sql  
-  when: mysql_host is defined
+  when: mysql57_host is defined
