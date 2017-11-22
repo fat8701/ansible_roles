@@ -75,12 +75,12 @@ https://github.com/kuailemy123/Ansible-roles/tree/master/tomcat
 ## 使用
 
 ```
-	service tomcat
-	Usage: tomcat ( commands ... )
-	commands:
-	  run               Start Tomcat without detaching from console
-	  start             Start Tomcat
-	  stop              Stop Tomcat
-	  version           What version of commons daemon and Tomcat
-	                    are you running?
+service tomcat
+Usage: tomcat ( commands ... )
+commands:
+  run               Start Tomcat without detaching from console
+  start             Start Tomcat
+  stop              Stop Tomcat
+  version           What version of commons daemon and Tomcat
+                    are you running?
 ```
