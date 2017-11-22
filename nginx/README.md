@@ -179,6 +179,6 @@ https://github.com/kuailemy123/Ansible-roles/tree/master/nginx
 ## 使用
 
 ```
-	/etc/init.d/nginx 
-	Usage: /etc/init.d/nginx {start|stop|reload|configtest|status|force-reload|upgrade|restart|reopen_logs}
+/etc/init.d/nginx 
+Usage: /etc/init.d/nginx {start|stop|reload|configtest|status|force-reload|upgrade|restart|reopen_logs}
 ```
