@@ -151,6 +151,11 @@ jenkins_plugins_recommended:
   - build-pipeline-plugin             
   - build-timestamp                   
   - mask-passwords                    
+  - zentimestamp
+  - email-ext-recipients-column
+  - emailext-template
+  - play-autotest-plugin
+
 
 jenkins_plugins_extra: []
 

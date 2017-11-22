@@ -167,7 +167,11 @@ os `Centos 7.2 X64`
 	  - parameterized-trigger             
 	  - build-pipeline-plugin             
 	  - build-timestamp                   
-	  - mask-passwords                    
+	  - mask-passwords
+	  - zentimestamp
+	  - email-ext-recipients-column
+	  - emailext-template
+	  - play-autotest-plugin
 	
 	jenkins_plugins_extra: []
 	
