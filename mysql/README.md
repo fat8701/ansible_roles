@@ -15,9 +15,9 @@ MySQL是一个关系型数据库管理系统，由瑞典MySQL AB 公司开发，
 
 ## 测试环境
 
-ansible `2.3.0.0`
-os `Centos 6.7 X64`
-python `2.6.6`
+ansible `2.3.2.0`
+os `Centos 7.1 X64`
+python `2.7.5`
 
 ## 角色变量
 	software_files_path: "/opt/software"
@@ -72,8 +72,6 @@ python `2.6.6`
 
 gcc cmake
 
-## github地址
-https://github.com/kuailemy123/Ansible-roles/tree/master/mysql
 
 ## Example Playbook
 
@@ -104,5 +102,5 @@ https://github.com/kuailemy123/Ansible-roles/tree/master/mysql
 
 ## 使用
 
-启动命令：/mysql_data/3306/mysql3306.sh start
-关闭命令：/mysql_data/3306/mysql3306.sh stop
+	启动命令：/mysql_data/3306/mysql3306.sh start
+	关闭命令：/mysql_data/3306/mysql3306.sh stop
