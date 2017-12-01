@@ -26,3 +26,18 @@
 
 - name: Configure | Create Mysql start shell.
   template: src=mysql.sh.j2 dest=/etc/rc.d/init.d/{{ mysql57_servicename }} mode=755
+
+- name: install | Create mysql bin soft link.
+  file: src={{ mysql57_basedir }}/bin/mysql dest=/usr/bin/mysql state=link
+
+- name: install | Check if mysql/etc/my.cnf is already configured.
+  stat: path={{ software_install_path }}/mysql/etc
+  register: mysql_etc_file_result
+
+- name: install | Create mysql/etc/my.cnf files path.
+  file: path={{ software_install_path }}/mysql/etc  state=directory
+  when: not mysql_etc_file_result.stat.exists
+
+- name: Create mysql default my.cnf files.
+  template: src=default.cnf.j2 dest={{ default_cnf }} owner=root group=root mode=755 backup=yes
+

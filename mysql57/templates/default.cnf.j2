@@ -1,0 +1,9 @@
+#/usr/local/mysql/etc/my.cnf
+[client]
+port            = {{ mysql57_port }}
+socket          = {{ mysql57_sock }}
+default-character-set = utf8mb4
+
+[mysql]
+prompt="MySQL [\d]> "
+no-auto-rehash

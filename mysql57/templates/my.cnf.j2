@@ -1,3 +1,4 @@
+#mysql config
 [client]
 user        = {{ mysql57_user }}
 {% if mysql57_replication_role %}
@@ -185,8 +186,8 @@ max_allowed_packet = 24M
 
 [mysql]
 no-auto-rehash
-default-character-set = utf8mb4
 prompt="MySQL [\d]> "
+default-character-set = utf8mb4
 
 
 [myisamchk]

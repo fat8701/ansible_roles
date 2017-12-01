@@ -44,7 +44,7 @@
   when: not mysql_etc_file_result.stat.exists
 
 - name: Create mysql default my.cnf files.
-  template: src=default.cnf.j2 dest={{ default_cnf }} owner=root group=root mode=755
+  template: src=default.cnf.j2 dest={{ default_cnf }} owner=root group=root mode=755 backup=yes
 
 - name: install | Create mysql bin soft link.
   file: src={{ software_install_path }}/mysql/bin/mysql dest=/usr/bin/mysql state=link
