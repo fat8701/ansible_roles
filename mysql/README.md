@@ -15,9 +15,9 @@ MySQL是一个关系型数据库管理系统，由瑞典MySQL AB 公司开发，
 
 ## 测试环境
 
-ansible `2.3.0.0`
-os `Centos 6.7 X64`
-python `2.6.6`
+ansible `2.3.2.0`
+os `Centos 7.1 X64`
+python `2.7.5`
 
 ## 角色变量
 	software_files_path: "/opt/software"
@@ -33,13 +33,17 @@ python `2.6.6`
 	mysql_port: "3306"
 	mysql_user: "root"
 	mysql_password: "123456"
-	mysql_datahome: "/mysql_data"
+	mysql_datahome: "/home/mysql56"
 	mysql_basedir: "{{ software_install_path }}/mysql"
 	mysql_portdir: "{{ mysql_datahome }}/{{ mysql_port }}"
 	mysql_datadir: "{{ mysql_datahome }}/{{ mysql_port }}/data"
 	mysql_cnf : "{{ mysql_datahome }}/{{ mysql_port }}/my.cnf"
+	default_cnf : "{{ mysql_basedir }}/etc/my.cnf"
 	mysql_sock : "{{ mysql_datahome }}/{{ mysql_port }}/mysql.sock"
 	mysql_startsh : "{{ mysql_datahome }}/{{ mysql_port }}/mysql{{ mysql_port }}.sh"
+	mysql_servicename : "mysql{{ mysql_port }}"
+	mysql_error_log: "{{ mysql_portdir }}/mysql_{{ mysql_port }}_error.log"
+
 
 	mysql_install_from_source: false
 	mysql_source_configure_command: >
@@ -104,5 +108,5 @@ https://github.com/kuailemy123/Ansible-roles/tree/master/mysql
 
 ## 使用
 
-启动命令：/mysql_data/3306/mysql3306.sh start
-关闭命令：/mysql_data/3306/mysql3306.sh stop
+	启动命令：/mysql_data/3306/mysql3306.sh start
+	关闭命令：/mysql_data/3306/mysql3306.sh stop
