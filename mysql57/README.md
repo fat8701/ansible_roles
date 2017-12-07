@@ -44,6 +44,8 @@ python `2.7.5`
     mysql57_cnf : "{{ mysql57_portdir }}/my.cnf"
     mysql57_sock : "{{ mysql57_portdir }}/mysql.sock"
     mysql57_servicename : "mysql{{ mysql57_port }}"
+    mysql_sysconfig_dir: "/usr/local/test"
+    
 
     mysql57_install_from_source: false
     mysql57_source_configure_command: >
@@ -96,12 +98,10 @@ python `2.7.5`
 
 gcc cmake boost
 
-## github地址
-https://github.com/kuailemy123/Ansible-roles/tree/master/mysql57
 
 ## Example Playbook
 
-	默认安装, 使用bin文件(已编译好的mysql),文件/opt/software/mysql-boost-5.7.20-bin.tar.gz,编译安装后basedir的打包)：
+	默认安装, 使用bin文件(编译安装后BASEDIR的打包，文件路径必须为/opt/software/mysql-boost-5.7.20-bin.tar.gz)：
     - hosts: node2
       roles:
       - mysql57

@@ -30,14 +30,18 @@
 - name: install | Create mysql bin soft link.
   file: src={{ mysql57_basedir }}/bin/mysql dest=/usr/bin/mysql state=link
 
-- name: install | Check if mysql/etc/my.cnf is already configured.
-  stat: path={{ software_install_path }}/mysql/etc
+- name: change default value of mysql_sysconfig_dir.
+  set_fact: mysql_sysconfig_dir='/etc/mysql'
+  when: mysql_sysconfig_dir == '' or not mysql57_install_from_source
+
+- name: install | Check if mysql_sysconfig_dir is already configured.
+  stat: path={{ mysql_sysconfig_dir }}
   register: mysql_etc_file_result
 
-- name: install | Create mysql/etc/my.cnf files path.
-  file: path={{ software_install_path }}/mysql/etc  state=directory
+- name: install | Create mysql_sysconfig_dir files path.
+  file: path={{ mysql_sysconfig_dir }}  state=directory
   when: not mysql_etc_file_result.stat.exists
 
 - name: Create mysql default my.cnf files.
-  template: src=default.cnf.j2 dest={{ default_cnf }} owner=root group=root mode=755 backup=yes
+  template: src=default.cnf.j2 dest={{ mysql_sysconfig_dir }}/my.cnf owner=root group=root mode=755 backup=yes
 
