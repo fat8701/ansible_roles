@@ -76,8 +76,6 @@ python `2.7.5`
 
 gcc cmake
 
-## github地址
-https://github.com/kuailemy123/Ansible-roles/tree/master/mysql
 
 ## Example Playbook
 
