@@ -38,7 +38,7 @@ python `2.7.5`
 	mysql_portdir: "{{ mysql_datahome }}/{{ mysql_port }}"
 	mysql_datadir: "{{ mysql_datahome }}/{{ mysql_port }}/data"
 	mysql_cnf : "{{ mysql_datahome }}/{{ mysql_port }}/my.cnf"
-	default_cnf : "{{ mysql_basedir }}/etc/my.cnf"
+	default_cnf_dir : "/etc/mysql"
 	mysql_sock : "{{ mysql_datahome }}/{{ mysql_port }}/mysql.sock"
 	mysql_startsh : "{{ mysql_datahome }}/{{ mysql_port }}/mysql{{ mysql_port }}.sh"
 	mysql_servicename : "mysql{{ mysql_port }}"

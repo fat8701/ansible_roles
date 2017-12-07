@@ -35,16 +35,16 @@
   file: path={{ mysql_error_log }} state=touch mode=755 owner=mysql group=mysql
   when: not mysql_log_result.stat.exists
 
-- name: install | Check if mysql/etc/my.cnf is already configured.
-  stat: path={{ mysql_basedir }}/etc
+- name: install | Check if other my.cnf is already configured.
+  stat: path={{ default_cnf_dir}}
   register: mysql_etc_file_result
 
-- name: install | Create mysql/etc/my.cnf files path.
-  file: path={{ mysql_basedir }}/etc  state=directory
+- name: install | Create other my.cnf files path.
+  file: path={{ default_cnf_dir}}  state=directory
   when: not mysql_etc_file_result.stat.exists
 
 - name: Create mysql default my.cnf files.
-  template: src=default.cnf.j2 dest={{ default_cnf }} owner=root group=root mode=755 backup=yes
+  template: src=default.cnf.j2 dest={{ default_cnf_dir }}/my.cnf owner=root group=root mode=755 backup=yes
 
 - name: install | Create mysql bin soft link.
   file: src={{ software_install_path }}/mysql/bin/mysql dest=/usr/bin/mysql state=link
