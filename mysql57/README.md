@@ -70,7 +70,6 @@ python `2.7.5`
       -DEXTRA_CHARSETS=all
       -DDEFAULT_CHARSET=utf8mb4
       -DDEFAULT_COLLATION=utf8mb4_general_ci
-      -DWITH_BOOST=boost
 
     mysql57_innodb_buffer_pool_size: "512M"
     mysql57_replication_user: {name: 'rep', password: '123456'}
