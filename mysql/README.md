@@ -38,11 +38,11 @@ python `2.7.5`
 	mysql_portdir: "{{ mysql_datahome }}/{{ mysql_port }}"
 	mysql_datadir: "{{ mysql_datahome }}/{{ mysql_port }}/data"
 	mysql_cnf : "{{ mysql_datahome }}/{{ mysql_port }}/my.cnf"
-	default_cnf_dir : "/etc/mysql"
 	mysql_sock : "{{ mysql_datahome }}/{{ mysql_port }}/mysql.sock"
 	mysql_startsh : "{{ mysql_datahome }}/{{ mysql_port }}/mysql{{ mysql_port }}.sh"
 	mysql_servicename : "mysql{{ mysql_port }}"
 	mysql_error_log: "{{ mysql_portdir }}/mysql_{{ mysql_port }}_error.log"
+	mysql_sysconfig_dir: ""
 
 
 	mysql_install_from_source: false
@@ -62,7 +62,13 @@ python `2.7.5`
 	  -DMYSQL_USER=mysql
 	  -DMYSQL_TCP_PORT={{ mysql_port }}
 	  -DWITH_SSL=system
-			
+	  -DSYSCONFDIR={{ mysql_sysconfig_dir }}
+	  -DWITH_ARCHIVE_STORAGE_ENGINE=1
+	  -DWITH_ZLIB=system
+	  -DENABLE_DOWNLOADS=1
+	  -DEXTRA_CHARSETS=all
+
+
 	mysql_replication_user: {name: 'rep', password: '123456'}
 	mysql_replication_master: ''
 	mysql_replication_master_port: "3306"

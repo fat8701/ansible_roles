@@ -53,7 +53,7 @@
       chdir=/tmp/{{ mysql_dirname }}
      
   - name: install | Make and install mysql.
-    shell: make && make install chdir=/tmp/{{ mysql_dirname }}
+    shell: make -j {{ ansible_processor_vcpus | d(1) }} && make -j {{ ansible_processor_vcpus | d(1) }} install chdir=/tmp/{{ mysql_dirname }}
   when: mysql_install_from_source
   
 - name: install | Copy mysql bin files to agent.
