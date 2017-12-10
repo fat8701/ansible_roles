@@ -1,6 +1,0 @@
----
-- hosts: all
-  roles:
-   - { role: mysql, mysql_install_from_source: true }
-   #- { role: mysql }
-
