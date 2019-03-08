@@ -22,7 +22,6 @@
 
 - name: 备份挂载信息
   shell: "df -h > /home/ubuntu/dfinfo.txt_`date +\"%F\"`"
-  #shell: "df -h > /home/openstack/dfinfo.txt_`date +\"%F\"`"
 
 - name: 停止docker服务
   service:

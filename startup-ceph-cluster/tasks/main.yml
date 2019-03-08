@@ -29,51 +29,34 @@
     prompt: "docker运行状态都ok吗? \n确认ok请按回车继续，否则请按Ctrl+C，然后按a中止!"
 
 - name: 在ceph0挂载cephfs
-  shell: "mount -t ceph 192.168.22.1:6789:/ /mnt/cephfs-22-1 -o name=cephfs,secret=AQCttihb3rEAOhAAx4T7+1lk3bKAkWbe0afanQ=="
+  shell: "mount -t ceph xxxxx"
   when: inventory_hostname == "ceph-test-1"
-  #when: inventory_hostname == "ceph0"
+ 
 
 - name: 在ceph1挂载cephfs
   shell: | 
-         mount -t ceph 192.168.22.1:6789:/ /mnt/cephfs_ceph0 -o name=cephfs,secret=AQCttihb3rEAOhAAx4T7+1lk3bKAkWbe0afanQ== 
-         mount -t ceph 192.168.22.2:6789:/ /mnt/cephfs_ceph1 -o name=cephfs,secret=AQC7uShbGUH6GxAAgjR4/TDRVWnsRs0dVkguVQ==
+         mount -t ceph xxxxx 
+         mount -t ceph xxxxx
   when: inventory_hostname == "ceph-test-2"
-  #when: inventory_hostname == "ceph1"
+ 
 
 - name: 在ceph3挂载cephfs
-  shell: "mount -t ceph 192.168.22.1:6789:/moodle /opt/moodle -o name=cephfs,secret=AQCttihb3rEAOhAAx4T7+1lk3bKAkWbe0afanQ=="
+  shell: "mount -t ceph xxxxx"
   when: inventory_hostname == "ceph-test-3"
-  #when: inventory_hostname == "ceph3"
+ 
 
 - block:  
   - name: 检查nextcloud容器的cephfs挂载情况
-    #shell: "docker exec -i nextcloud_1 df -h |egrep \"192.*nextcloud.*data\""
-    shell: "docker exec -i zabbix-agent df -h |egrep \"192.*nextcloud.*data\""
+    shell: "docker exec -i nextcloud_1 df -h |egrep \"192.*nextcloud.*data\""
     register: mount_nc
     ignore_errors: true
    
   - name: 如果没有mount cephfs，执行mount -a挂载
-    #shell: "docker exec -i nextcloud_1 mount -a"
-    shell: "docker exec -i zabbix-agent mount -a"
+    shell: "docker exec -i nextcloud_1 mount -a"
     when: mount_nc.stdout == ""
 
   when: inventory_hostname in groups["ceph"]
 
-#- name: 暂停ceph0的mariadb容器
-#  shell: |
-#           docker stop mariadb
-#           #mv /var/lib/docker/volumes/mariadb/_data/grastate.dat /home/openstack/grastate.dat_`date +"%F"`
-#  become: true
-#  become_user: root
-#  become_method: sudo
-#  when: inventory_hostname == "openstack-test" or inventory_hostname == "ceph-test-3"
-#
-#- name: 暂停ceph1的mariadb容器
-#  shell: docker stop mariadb
-#  become: true
-#  become_user: root
-#  become_method: sudo
-#  when: inventory_hostname == "ceph-test-3"
 
 - block:
   - name: 输出grastate.dat文件
@@ -86,21 +69,16 @@
   
   - name: 更换openstack的界面logo
     shell: |
-            docker cp /root/1.txt mariadb:/
-            docker cp /root/2.txt mariadb:/
-  #         docker cp /home/openstack/logo/favicon.ico horizon:/var/lib/kolla/venv/lib/python2.7/site-packages/static/dashboard/img/
-  #         docker cp /home/openstack/logo/logo.svg horizon:/var/lib/kolla/venv/lib/python2.7/site-packages/static/dashboard/img/
-  #         docker cp /home/openstack/logo/logo-splash.svg horizon:/var/lib/kolla/venv/lib/python2.7/site-packages/static/dashboard/img/
+           docker cp /home/openstack/logo/favicon.ico horizon:/var/lib/kolla/venv/lib/python2.7/site-packages/static/dashboard/img/
+           docker cp /home/openstack/logo/logo.svg horizon:/var/lib/kolla/venv/lib/python2.7/site-packages/static/dashboard/img/
+           docker cp /home/openstack/logo/logo-splash.svg horizon:/var/lib/kolla/venv/lib/python2.7/site-packages/static/dashboard/img/
   when: inventory_hostname == "openstack-test" or inventory_hostname == "ceph-test-3"
-  #when: inventory_hostname == "ceph0" or inventory_hostname == "ceph1"
 
 - name: 使用kolla-ansible完成mariadb集群恢复,具体情况请去{{ inventory_hostname }}主机tail日志{{ mariadb_recovery_log }}
   shell: kolla-ansible -i /root/multinode mariadb_recovery -vvv > {{ mariadb_recovery_log }}
-  #shell: kolla-ansible -i /home/openstack/multinode mariadb_recovery | tee {{ mariadb_recovery_log }}
   register: recover_answer
   until: recover_answer.rc == 0
   retries: 2
   delay: 10
   when: inventory_hostname == "openstack-test"
-  #when: inventory_hostname == "ceph0"
 

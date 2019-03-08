@@ -11,4 +11,4 @@
     delay: 10
 
   delegate_to: "{{ check_host }}"
-# when: check_host in groups['openstack']
+
