@@ -1,0 +1,6 @@
+---
+# author: fat
+
+#ansible_python_interpreter: /usr/bin/python2.6
+#ansible_python_interpreter: "/usr/bin/python2.7"
+mariadb_recovery_log: /root/mariadb_recovery.log

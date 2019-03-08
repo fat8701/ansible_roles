@@ -1,0 +1,59 @@
+---
+#author: fat
+- block:
+  - name: 查询运行的云主机id
+    shell: "openstack server list --all-projects --os-cloud {{ cloud_id }} --status=ACTIVE -c ID -f value" 
+    register: active_vm_id
+
+  - name: 关闭所有云主机
+    shell: "openstack server stop {{ item }} --os-cloud {{ cloud_id }}"
+    with_items: "{{ active_vm_id.stdout_lines }}"
+
+  when: inventory_hostname in groups["openstack"]
+  run_once: true
+
+- name: 确保不存在qemu进程,即云主机全部已关闭
+  include_tasks: check.yml
+  loop: "{{ groups['openstack'] }}"
+  loop_control:
+    loop_var: check_host
+    pause: 2
+  run_once: true
+
+- name: 备份挂载信息
+  shell: "df -h > /home/ubuntu/dfinfo.txt_`date +\"%F\"`"
+  #shell: "df -h > /home/openstack/dfinfo.txt_`date +\"%F\"`"
+
+- name: 停止docker服务
+  service:
+    name: docker
+    state: stopped
+  delegate_to: "{{ item }}"
+  with_items:
+     - ceph-test-3
+     - openstack-test
+  run_once: true
+
+- name: 获取cephfs挂载信息
+  shell: "df -h|grep ':6789:'|awk '{ print $NF}'"
+  ignore_errors: true
+  register: ceph_mount
+
+- name: 卸载cephfs
+  shell: "umount {{ item }}"
+  with_items: "{{ ceph_mount.stdout_lines }}"
+
+- name: 设置ceph集群noout标志位
+  shell: "ceph osd set noout"
+  when: inventory_hostname in groups['ceph']
+
+- name: 停止所有ceph服务
+  service: 
+    name: ceph.target
+    state: stopped
+  when: inventory_hostname in groups['ceph']
+
+- name: 3分钟后关机!!!可以在主机上执行"shutdown -c"来停止关机进程
+  shell: "shutdown -h +3"
+
+

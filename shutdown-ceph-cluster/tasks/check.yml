@@ -1,0 +1,14 @@
+- block:
+  - name: 查询{{ check_host }}主机上的虚机数量
+    shell: "ps -ef|grep qemu|grep -v grep|wc -l"
+    register: kvm_num
+  
+  - name: 检查{{ check_host }}主机的qemu进程数是否为0
+    shell: "ps -ef|grep qemu|grep -v grep|wc -l"
+    register: kvm_result
+    until: kvm_result.stdout == "0"
+    retries: "{{ kvm_num.stdout|int *3 +1 }}"
+    delay: 10
+
+  delegate_to: "{{ check_host }}"
+# when: check_host in groups['openstack']
