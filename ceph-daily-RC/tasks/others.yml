@@ -1,0 +1,12 @@
+---
+# author: fat
+
+- name: check pan docker service health
+  uri:
+    url: http://{{ansible_host}}:9001
+  register: pan_uri
+  ignore_errors: true
+
+#- debug: msg={{pan_uri}}
+
+

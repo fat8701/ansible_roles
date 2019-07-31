@@ -1,0 +1,64 @@
+---
+# author: fat
+
+- block:
+  - name: echo split line
+    shell:
+      echo -----每日巡检结果----- > {{ inspection_file }}
+
+  - name: save inspection results --1
+    shell: |
+          echo {{ ['ceph0-rbd-mirror ERROR','ceph0-rbd-mirror OK'][ hostvars['ceph0']['rbd_mirror_status'].rc == 0 ] }} >> {{ inspection_file }}
+          echo {{ ['ceph3-nginx ERROR','ceph3-nginx OK'][hostvars['ceph3']['nginx_status'].rc == 0 ] }} >> {{ inspection_file }}
+          echo {{ ['ceph3-radosgw sync ERROR','ceph3-radosgw sync OK'][hostvars['ceph3']['radosgw_status'].rc == 1 ] }} >> {{ inspection_file }} 
+
+  - name: save inspection results --2
+    shell: |
+          echo {{ [item+' container ERROR!',item+' all-container OK'][hostvars[item]['docker_status'].rc == 1 ] }} >> {{ inspection_file }} 
+          #echo {{ ['%s container ERROR' | format(item),'%s all-container OK' | format(item)][hostvars[item]['docker_status'].rc == 1 ] }} >> {{ inspection_file }}
+          echo {{ [item+' pan port\(9001\) ERROR!',item+' pan port\(9001\) OK'][hostvars[item]['pan_uri'].status == 200 ] }} >> {{ inspection_file }} 
+    with_items: "{{ ansible_play_hosts }}"
+  
+  - name: check domains
+    uri:
+       url: "{{ item }}"
+       validate_certs: no
+    with_items: "{{ check_domain }}"
+    register: others_uri
+    ignore_errors: true
+
+  - name: echo split line
+    shell:
+      echo ---------200 OK--------- >> {{ inspection_file }}
+
+  - name: update inspection.txt
+    shell: 
+      echo {{ ['-n ',item.url][item.status == 200 ] }} >> {{ inspection_file }}
+    with_items: "{{ others_uri.results }}"
+
+  - name: echo split line
+    shell:
+      echo ---------ERROR--------- >> {{ inspection_file }}
+
+  - name: update inspection.txt
+    shell: 
+      echo {{ ['-n',item.url][item.status != 200 ] }} >> {{ inspection_file }}
+    with_items: "{{ others_uri.results }}"
+
+  - name: copy wechat scripts
+    copy:
+      src: "{{ wechat_file }}"
+      dest: "{{ wechat_scripts }}/{{ wechat_file }}"
+      mode: 0644
+
+  - name: pip install module
+    pip: 
+      name: requests
+
+  - name: send inspection results to wechat 
+    shell: python {{ wechat_scripts }}/{{ wechat_file }} '@all' '' {{ inspection_file }}
+
+  connection: local
+  become: false
+  run_once: true
+

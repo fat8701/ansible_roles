@@ -1,0 +1,15 @@
+---
+# author: fat
+check_domain:
+        - http://gitlab.cmdrawin.com
+        - http://dockerweb.cmdrawin.com
+        - http://pan.cmdrawin.com
+        - http://cloud.cmdrawin.com
+        - http://mirrors.cmdrawin.com/ubuntu
+        - http://mirrors.cmdrawin.com/root/pypi
+        - http://mirrors.cmdrawin.com/nexus
+        - http://192.168.11.223
+        - http://192.168.19.185:7180
+        - https://192.168.22.1:8443
+        - https://192.168.22.2:8443
+

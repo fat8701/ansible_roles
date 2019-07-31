@@ -1,0 +1,27 @@
+---
+# author: fat
+
+- block:
+  - name: check openstack containers health
+    shell: "service ceph-rbd-mirror@admin status|grep Active|grep running"
+    register: rbd_mirror_status
+    ignore_errors: true
+  
+  
+  when: inventory_hostname == 'ceph0'
+ 
+- block:
+  - name: check nginx on ceph3
+    shell: ps -ef|grep nginx|grep -v grep
+    register: nginx_status
+    ignore_errors: true
+
+
+  - name: check radosgw-rsync on ceph3
+    shell: "radosgw-admin sync status|egrep 'ERROR|failed'"
+    register: radosgw_status
+    ignore_errors: true
+  
+
+  when: inventory_hostname == 'ceph3'
+

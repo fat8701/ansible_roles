@@ -1,0 +1,12 @@
+---
+# author: fat
+
+- name: check openstack containers health
+  shell: "docker ps -a |egrep  'Exited.*ago'"
+  register: docker_status
+  ignore_errors: true
+
+#- debug: msg={{ docker_status }}
+
+
+

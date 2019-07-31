@@ -1,0 +1,5 @@
+---
+# author: fat
+inspection_file: "/tmp/inspection.txt"
+wechat_scripts: "/tmp"
+wechat_file: "wechat.py"

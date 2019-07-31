@@ -1,0 +1,7 @@
+---
+#author: fat
+       
+ - include: openstack.yml
+ - include: ceph.yml
+ - include: others.yml
+ - include: wechat.yml
